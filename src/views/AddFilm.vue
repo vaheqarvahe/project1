@@ -11,7 +11,13 @@ export default {
 
   components: {
     AddUpdate
-  
+    
   },
+  methods:{
+    barev(){
+      console.log("barev");
+
+    }
+  }
 }
 </script>
