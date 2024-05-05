@@ -10,7 +10,6 @@
 </template>
  
 <script>
-// Import the loadStripe function from Stripe.js library
 import {loadStripe} from '@stripe/stripe-js';
 import axios from 'axios';
 import { mapState } from 'vuex';
@@ -24,7 +23,6 @@ export default {
         };
     },
     mounted() {
-        // Initialize Stripe with your publishable key using the loadStripe function
         this.initStripe();
     },
     computed: { ...mapState(["user", "url"]) },
@@ -32,7 +30,6 @@ export default {
         async initStripe() {
             this.stripe = await loadStripe('pk_test_51P8jBVP5bKRaxDGPXBeptbZA0wcOHLJr4AjE8vi6kRd468SYT1Po4R2nqzOGbYGjkFEMLCukhmgE3lZCXsWrvKXr00X9YQxJLj');
             const elements = this.stripe.elements();
-            // Create an instance of the card Element
             this.cardElement = elements.create('card', {
                 style: {
                     base: {
@@ -49,11 +46,11 @@ export default {
             this.cardElement.mount('#card-element');
         },
         async createPaymentIntent() {
-            let config = {
+        let config = {
                 headers: {
-                    'Authorization': `Token ${localStorage.getItem('token')}`
-                },
+            "Authorization": `Token ${localStorage.token}`
             }
+        }
 
             const { data } = await axios.post(`${this.url}/payment/${this.$route.params.id}/`, {}, config);
             try {
@@ -71,8 +68,7 @@ export default {
                 } else {
                     console.log('Payment successful');
                     // await axios.post(`${this.url}accept_payment/${this.$route.params.id}/`, {}, config)
-                    this.$router.push({ name: 'allfilm' }); // Redirect to the movies page
-
+                    this.$router.push({ name: 'allfilm' });
                 }
             } catch (error) {
                 console.error('Error confirming payment:', error.message);

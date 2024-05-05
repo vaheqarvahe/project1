@@ -26,8 +26,8 @@ export default {
        try{
 
             let data = await axios.get(this.url + "confirm/", config)
-            console.log(data);
-                this.$router.push({name: "sign_in"})
+            console.log("barev",data);
+            this.$router.push({name: "sign_in"})
            
     }
     catch(err){

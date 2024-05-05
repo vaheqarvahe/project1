@@ -72,7 +72,6 @@ const routes = [
     name: 'film_info',
     meta: {
       user: true,
-      free: true
     },
     component: FilmInfo
   },

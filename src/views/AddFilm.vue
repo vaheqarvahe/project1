@@ -14,13 +14,9 @@ export default {
     
   },
   methods:{
-    barev(){
-      console.log("barev");
-
-    }
+    
   }
 }
 </script>
 
 
-"FAsdf"

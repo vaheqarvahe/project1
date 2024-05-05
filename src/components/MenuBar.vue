@@ -7,9 +7,9 @@
 
       </div>
       <div class="search-logout">
-        <input type="text" placeholder="Search by title" v-model="searchText" class="search-input">
-        <button @click="search" class="search-btn">Search</button>
-        <button @click="logout" class="logout-btn">Log Out 📤</button>
+        <input v-if="check()" type="text" placeholder="Search by title" v-model="searchText" class="search-input">
+        <button v-if="check()" @click="search" class="search-btn">Search</button>
+        <button @click="log_out()" class="logout-btn">Log Out 📤</button>
       </div>
     </div>
   </template>
@@ -28,11 +28,22 @@ export default {
       ...mapState(["user"])
     },
     methods: {
-        ...mapActions(['get_search',"get_staff"]),
+        ...mapActions(['get_search',"get_staff","logout"]),
         search() {
             this.get_search(this.searchText)
             this.$router.push({ query: { searchText: this.searchText } });
         },
+        check() {
+         if (this.$route.name == "allfilm") {
+          return true
+         } else{
+          return false
+         }
+        },
+        async log_out(){
+          await this.logout()
+          window.location.reload()
+        }
     },
 }
 </script>

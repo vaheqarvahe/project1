@@ -43,7 +43,7 @@ export default createStore({
         router.push({name: "confirm"})
       }
       catch(err){
-        console.log(err);
+        console.log("barev");
       }
     },
     async user_signin({state,commit},obj){
@@ -101,7 +101,7 @@ export default createStore({
 
       }
       catch(err){
-        console.error(err);
+        console.log(err);
       }
     },
     async update_film({state},obj){
@@ -111,7 +111,7 @@ export default createStore({
             "Authorization": `Token ${localStorage.token}`
           }
         }
-      await axios.post(state.url + "add_update/", obj, config)
+      await axios.put(state.url + "add_update/", obj, config)
 
 
       }
@@ -182,6 +182,15 @@ export default createStore({
       }
       let {data} = await axios.delete(state.url + `delete/film/${pk}`, config)
       commit("change_all_film", data.film)
+    },
+    async logout({state}) {
+      let config = {
+        headers: {
+          "Authorization": `Token ${localStorage.token}`
+        }
+      }
+      await axios.delete(state.url + "log_out/", config);
+      localStorage.removeItem('token');
     }
 
   },

@@ -1,7 +1,7 @@
 <template>
     <div>
       <MenuBar/>
-      <div class="add-film-container">
+      <div :key="total?.id" class="add-film-container">
         <Form :validation-schema="schema" @submit="submitForm" enctype="multipart/form-data" class="add-film-form">
           <div class="form-group">
             <label for="name">Name:</label>
@@ -15,21 +15,18 @@
           </div>
           <div class="form-group">
             <label for="genre">Genre:</label>
-            <Field v-if="!edit" name="genre" as="select" class="select-field" multiple>
-              <option v-for="elm in staff.genre" :key="elm.id" :value="elm.id" :selected="total?.genre?.includes(elm.id)">{{ elm.name }}</option>
-            </Field>
-            <Field v-if="edit" name="genre" as="select" class="select-field" multiple>
+            <Field name="genre" as="select" class="select-field" multiple>
               <option v-for="elm in staff.genre" :key="elm.id" :value="elm.id" :selected="total?.genre?.includes(elm.id)">{{ elm.name }}</option>
             </Field>
             <ErrorMessage name="genre" class="error-message" />
           </div>
           <div class="form-group">
-            <label for="country">Country:</label>
-            <Field name="country" as="select" class="select-field">
-              <option v-for="elm in staff.country" :key="elm.id" :value="elm.id">{{ elm.name }}</option>
-            </Field>
-            <ErrorMessage name="country" class="error-message" />
-          </div>
+          <label for="country">Country:</label>
+          <Field  name="country" as="select" class="select-field">
+            <option v-for="elm in staff.country" :key="elm.id" :value="elm.id" :selected="elm.id === total?.country?.id">{{ elm.name }}</option>
+          </Field>
+          <ErrorMessage name="country" class="error-message" />
+        </div>
           <div class="form-group">
             <label for="year">Year:</label>
             <Field as="select" name="year" class="select-field">
@@ -46,12 +43,12 @@
           </div>
           <div>            
             <label for="free">Free:</label>
-            <Field v-model="isFree" name="free" type="checkbox">
+            <Field :value="total?.free" v-model="isFree" name="free" type="checkbox">
             </Field>
           </div>
           <div class="form-group">
-            <label v-if="isFree" for="price">Price:</label>
-            <Field v-if="isFree" name="price" type="number" class="input-field"/>
+            <label v-if="!isFree" for="price">Price:</label>
+            <Field v-if="!isFree" name="price" type="number" :value="total?.price" class="input-field"/>
             <ErrorMessage name="price" class="error-message" />
           </div>
           <div class="form-group">
@@ -98,6 +95,7 @@
       ...mapState(["staff"])
     },
     methods: {
+      ...mapActions(["get_movie_staff", "add_film", "update_film"]),
       schema() {
         return yup.object({
           name: yup.string().required('Name is required'),
@@ -115,23 +113,33 @@
         });
       },
       submitForm(obj) {
-        let form = new FormData();
-        console.log(this.isFree);
         if (this.isFree) {
           obj.free = !this.isFree
         }else{
           obj.free = !!this.isFree
         }
-        for (let i in obj) {
-          if (i === "genre") {
-            obj[i].forEach(elm => form.append("genre", elm));
-          } else {
-            form.append(i, obj[i]);
+        if (!this.edit) {
+          let form = new FormData();
+          for (let i in obj) {
+            if (i === "genre") {
+              obj[i].forEach(elm => form.append("genre", elm));
+            } else {
+              form.append(i, obj[i]);
+            }
+          } 
+          this.add_film(form)
+        }else{
+          let form = new FormData();
+          for (let key in obj) {
+            if (Array.isArray(obj[key])) {
+              obj[key].forEach(elm => form.append(key, elm));
+            } else {
+              form.append(key, obj[key]);
+            }
           }
+          this.update_film(form)
         }
-        console.log(obj);
       },
-      ...mapActions(["get_movie_staff", "add_film"])
     },
     mounted() {
       this.get_movie_staff();
